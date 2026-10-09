@@ -8,8 +8,8 @@
   --gold:#f2c14e;--fold:#c8323c;--call:#1f8a5b;--raise:#e2832a;--info:#5aa9ff;--bad:#ff6b6b;--good:#4fd18b;
   --s-sp:#2b2f36;--s-he:#d23a3a;--s-di:#2f6fdc;--s-cl:#27984f;
   --f:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
-  --av:66px;--pw:132px;--dock:96px;color-scheme:dark}
-@media (max-width:720px){:root{--av:44px;--pw:84px;--dock:184px}}
+  --av:66px;--pw:132px;--dock:96px;--lgw:clamp(48px,10.5vmin,90px);color-scheme:dark}
+@media (max-width:720px){:root{--av:36px;--pw:76px;--dock:150px;--lgw:50px}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{height:100%}
@@ -81,8 +81,8 @@ button,input,select{font:inherit;color:inherit}
 .cd .s{position:absolute;right:7%;bottom:4%;font-size:calc(var(--w)*.56);line-height:1;opacity:.95}
 .cd.back{background:repeating-linear-gradient(45deg,#8c1f2b 0 4px,#a3293a 4px 8px);box-shadow:0 2px 5px rgba(0,0,0,.5),inset 0 0 0 2px #f1e3c6}
 .cd.slot{background:transparent;box-shadow:none;border:2px dashed rgba(255,255,255,.14)}
-.cd.xs{--w:22px}.cd.md{--w:clamp(30px,6.4vmin,54px)}.cd.lg{--w:clamp(48px,10.5vmin,90px)}.cd.bd{--w:clamp(42px,10vmin,90px)}
-@media (max-width:720px){.cd.bd{--w:40px}.cd.lg{--w:clamp(46px,13vmin,64px)}.cd.md{--w:30px}}
+.cd.xs{--w:22px}.cd.md{--w:clamp(30px,6.4vmin,54px)}.cd.lg{--w:var(--lgw)}.cd.bd{--w:clamp(42px,10vmin,90px)}
+@media (max-width:720px){.cd.bd{--w:clamp(40px,11vmin,52px)}.cd.md{--w:26px}.cd.xs{--w:15px}}
 .cd.dim{opacity:.45}
 .cd.flip{animation:flip .45s ease both}
 @keyframes flip{from{transform:rotateY(90deg) translateY(-6px);opacity:.2}to{transform:none;opacity:1}}
@@ -111,7 +111,7 @@ button,input,select{font:inherit;color:inherit}
 .seat.me .hole.open{bottom:calc(100% - var(--av)*.8);gap:4px}
 .seat.me .hole.open .cd:first-child{transform:rotate(-5deg) translateY(3px)}.seat.me .hole.open .cd:last-child{transform:rotate(5deg) translateY(3px)}
 .seat.me{--av:76px;z-index:6}
-@media (max-width:720px){.seat.me{--av:52px;--pw:104px}}
+@media (max-width:720px){.seat.me{--av:42px;--pw:104px}}
 .seat.folded{opacity:.42}
 .seat.actor .ava{box-shadow:0 0 0 3px var(--gold),0 0 22px 4px rgba(242,193,78,.55)}
 .seat.actor .plate{border-color:var(--gold)}
@@ -229,7 +229,7 @@ button,input,select{font:inherit;color:inherit}
 @media (max-width:720px){
   .resultPill,.resultBanner{position:fixed;left:10px;right:10px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:40;max-width:none}
   .seat.me .act{display:none}
-  .seat.me .hand{left:50%;transform:translateX(-50%);top:calc(100% + 3px);bottom:auto;font-size:.88rem}
+  .seat.me .hand{display:none!important}
 }
 
 .bet.mine.side{transform:translate(calc(-100% - clamp(48px,10.5vmin,90px) - 16px),-50%)}
@@ -244,6 +244,38 @@ button,input,select{font:inherit;color:inherit}
 .keybtn.cap{border-color:var(--gold);color:var(--gold);font-family:var(--f);font-size:.8rem;font-weight:500}
 .setrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.95rem}
 .setrow input[type=range]{flex:1;min-width:120px;accent-color:var(--gold)}
+
+/* 내 베팅: 내 카드 바깥에 */
+.mybet{position:absolute;z-index:8;display:flex;align-items:center;gap:5px;white-space:nowrap;background:rgba(0,0,0,.78);border:1px solid rgba(242,193,78,.6);border-radius:999px;padding:3px 12px 3px 4px;font-family:var(--mono);font-weight:700;font-size:clamp(.9rem,2.1vmin,1.1rem);
+  right:calc(50% + var(--lgw) + 14px);bottom:calc(100% - var(--av)*.8 + var(--lgw)*.45)}
+.mybet i{width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,#fff 22%,#e0a21b 24%,#e0a21b 58%,#fff 60%,#fff 70%,#e0a21b 72%);border:1px solid rgba(0,0,0,.4)}
+#myHand{color:var(--gold);font-weight:700}
+@media (min-width:721px){#myHand{display:none}}
+@media (max-width:720px){
+  .mybet{right:auto;left:50%;transform:translateX(-50%);bottom:calc(100% - var(--av)*.8 + var(--lgw)*1.4 + 8px);font-size:.85rem;padding:2px 9px 2px 3px}
+  .mybet i{width:14px;height:14px}
+  .ava{border-width:2px;font-size:calc(var(--av)*.45)}
+  .plate{padding:2px 4px 3px;border-radius:9px;margin-top:-6px}
+  .nm{font-size:.68rem}.stk{font-size:.82rem}.stk small{display:none}
+  .seat.me .stk{font-size:.98rem}.seat.me .stk small{display:block}
+  .pos{font-size:.58rem;top:calc(var(--av)*.45);left:-5px;padding:0 3px}
+  .act{font-size:.66rem;padding:0 6px;top:calc(100% + 1px)}
+  .hand{font-size:.66rem;top:calc(100% + 18px)}
+  .hole.closed{top:0}.hole.closed .cd:last-child{margin-left:-6px}
+  .bet{font-size:.72rem;padding:1px 7px 1px 2px;gap:3px}.bet i{width:12px;height:12px}
+  .dbtn{width:18px;height:18px;font-size:.6rem}
+  .potpill{font-size:.88rem;padding:3px 12px}.potline{font-size:.72rem}.street{font-size:.72rem}
+  #center{gap:5px;display:flex;flex-direction:column;align-items:center}
+  .stline{order:-1}
+  .seat[data-side=l]:not(.me) .hand{left:-6px;transform:none}
+  .seat[data-side=r]:not(.me) .hand{left:auto;right:-6px;transform:none}
+  .resultPill{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:40;max-width:none;font-size:1rem}
+  #actions{gap:5px;padding:6px 10px calc(6px + env(safe-area-inset-bottom))}
+  .presets{gap:4px}.chipbtn{height:30px;font-size:.8rem}
+  .amtrow{gap:5px}.amtrow input[type=number]{width:62px;height:32px;font-size:.9rem}#amtc{width:72px!important}
+  #slider{height:26px}
+  .abtn{height:50px;font-size:1.05rem;border-radius:13px}
+}
 </style>
 </head><body>
 <div class="netmsg" id="netmsg" role="status" hidden></div>
@@ -289,7 +321,7 @@ button,input,select{font:inherit;color:inherit}
           <div class="potpill" id="potpill"></div>
           <div class="board" id="board"></div>
           <div class="potline" id="potline"></div>
-          <div><span class="street" id="street"></span> <span class="turnTimer" id="turnTimer" hidden></span></div>
+          <div class="stline"><span class="street" id="street"></span> <span class="turnTimer" id="turnTimer" hidden></span></div>
         </div>
       </div>
       <div id="hud">
@@ -341,7 +373,7 @@ button,input,select{font:inherit;color:inherit}
   </aside>
 
   <div id="actions" hidden>
-    <div class="amsgbox"><div><span id="amsg"></span><span id="amsgTail"></span></div><div id="amtmin"></div><div id="amtwarn"></div></div>
+    <div class="amsgbox"><div><span id="amsg"></span><span id="amsgTail"></span> <span id="myHand"></span></div><div id="amtmin"></div><div id="amtwarn"></div></div>
     <div id="sizer" hidden>
       <div class="presets" id="presets"></div>
       <div class="amtrow"><input type="number" id="amtc" inputmode="numeric" aria-label="베팅 금액(칩)"><span class="u">칩 =</span><input type="number" id="amt" inputmode="decimal" step="0.5" aria-label="베팅 금액(BB)"><span class="u">BB</span><input type="range" id="slider" aria-label="레이즈 금액"><button class="btn gold sm" id="bBetGo" type="button">베팅</button></div>
@@ -528,7 +560,7 @@ class Game{
     else if(type==='call'){const a=this.put(p,L.toCall);p.lastAct=p.allIn?'올인 콜':'콜';this.ev(`${name} 콜 ${a}${p.allIn?' (올인)':''}`);
       if(this.street===0&&this.raises===0&&!p.isHero)this.limpers++;}
     else{ // raise / bet
-      to=Math.max(L.minTo,Math.min(L.maxTo,Math.round(to/5)*5));
+      to=Math.max(L.minTo,Math.min(L.maxTo,Math.round(to/5)*5));if(L.maxTo-to<5||+arguments[2]>=L.maxTo)to=L.maxTo;
       const inc=to-this.currentBet;this.put(p,to-p.bet);
       if(inc>=this.minRaise){this.minRaise=inc;for(const q of this.seats)if(q.i!==i)q.acted=false;}
       const wasBet=this.currentBet===0;this.currentBet=Math.max(this.currentBet,to);this.lastAggr=i;
@@ -898,9 +930,9 @@ function mySeat(){return S&&typeof S.me==='number'?S.me:-1;}
 const AVA_COLORS=['#7b5cff','#e0703a','#2e9e6a','#d14d72','#3a86d1','#b5892e','#8e5bb5','#3fa3a0','#c4513a','#5d7bd6'];
 function avaColor(name){let h=0;for(const ch of String(name))h=(h*31+ch.charCodeAt(0))>>>0;return AVA_COLORS[h%AVA_COLORS.length];}
 function ensureSeats(n){const st=$('stage');const have=st.querySelectorAll('.seat').length;
-  for(let i=have;i<n;i++)st.insertAdjacentHTML('beforeend',`<div class="seat" id="seat${i}"><div class="hole"></div><div class="ava"><span></span></div><div class="plate"><div class="nm"></div><div class="stk"></div><div class="tbar"><i></i></div></div><div class="pos"></div><div class="act"></div><div class="hand"></div></div><div class="bet" id="bet${i}"></div><div class="dbtn" id="dbtn${i}">D</div>`);
+  for(let i=have;i<n;i++)st.insertAdjacentHTML('beforeend',`<div class="seat" id="seat${i}"><div class="hole"></div><div class="ava"><span></span></div><div class="plate"><div class="nm"></div><div class="stk"></div><div class="tbar"><i></i></div></div><div class="pos"></div><div class="act"></div><div class="hand"></div><div class="mybet" hidden></div></div><div class="bet" id="bet${i}"></div><div class="dbtn" id="dbtn${i}">D</div>`);
   st.querySelectorAll('.seat').forEach((el,i)=>{el.hidden=i>=n;});}
-function GEO(){return MQ.matches?{cx:50,cy:49,rx:39,ry:38}:{cx:50,cy:48,rx:41,ry:36};}
+function GEO(){return MQ.matches?{cx:50,cy:48,rx:40,ry:38}:{cx:50,cy:48,rx:41,ry:36};}
 function seatXY(i,n,me){const d=((i-(me>=0?me:0))%n+n)%n;const a=(90+d*360/n)*Math.PI/180;const g=GEO();
   return[g.cx+g.rx*Math.cos(a),g.cy+g.ry*Math.sin(a)];}
 function renderAll(){renderStatus();renderMenu();renderLobby();renderTable();renderSide();renderActions();renderClock();renderTools();sfxWatch();applyKeyHints();}
@@ -929,7 +961,7 @@ function handName(cards,board){if(!cards||cards.length<2)return'';
   return scoreName(evalCards([...cards,...board],2+board.length));}
 function renderTable(){
   const st=S;$('tableWrap').hidden=!st;if(!st)return;
-  const n=st.s.length,me=mySeat(),bb=st.bl[1];ensureSeats(n);
+  const n=st.s.length,me=mySeat(),bb=st.bl[1];ensureSeats(n);if(me<0||(st.s[me]&&st.s[me][3]&4))$('myHand').textContent='';
   const cy=GEO().cy;const shown=boardShown(st),rv=shown<st.bd.length,bdv=st.bd.slice(0,shown);
   for(let i=0;i<n;i++){const x=st.s[i],el=$('seat'+i),[px,py]=seatXY(i,n,me);
     const out=!!(x[3]&4),folded=!!(x[3]&1),away=!!(x[3]&8),isMe=i===me;
@@ -947,10 +979,10 @@ function renderTable(){
     else if(isMe&&myCards&&!out){h=myCards.map(c=>cardEl(c,'lg'+(folded?' dim':''))).join('');hn=folded?'':handName(myCards,bdv);}
     else if(!folded&&!out&&!st.ov)h=cardEl(null,'xs')+cardEl(null,'xs');
     const hole=el.querySelector('.hole');hole.innerHTML=h;hole.className='hole'+((isMe||(st.ov&&st.r&&st.r.sh&&st.r.sh[i]))?' open':' closed');
-    const he=el.querySelector('.hand');he.textContent=hn;he.hidden=!hn;
+    const he=el.querySelector('.hand');he.textContent=hn;he.hidden=!hn;if(isMe)$('myHand').textContent=hn?'· 내 패: '+hn:'';
     // 베팅 칩, 딜러 버튼 (좌석과 중앙 사이)
-    const bt=$('bet'+i);const bx=isMe?px:px+(50-px)*0.36,by=isMe?py-(MQ.matches?16:8):py+(cy-py)*0.40;bt.classList.toggle('mine',isMe);bt.classList.toggle('side',isMe&&!MQ.matches);bt.style.left=bx+'%';bt.style.top=by+'%';
-    bt.innerHTML=x[2]>0&&!out?`<i></i>${bbOf(x[2],bb).replace('BB',' BB')}`:'';bt.hidden=!(x[2]>0&&!out);
+    const bt=$('bet'+i);const bx=isMe?px:px+(50-px)*0.36,by=isMe?py-(MQ.matches?16:8):py+(cy-py)*0.40;bt.classList.toggle('mine',isMe);bt.classList.toggle('side',isMe&&!MQ.matches);bt.style.left=bx+'%';bt.style.top=by+'%';const mb=el.querySelector('.mybet');
+    bt.innerHTML=x[2]>0&&!out?`<i></i>${bbOf(x[2],bb).replace('BB',' BB')}`:'';bt.hidden=!(x[2]>0&&!out);if(isMe){mb.innerHTML=bt.innerHTML;mb.hidden=bt.hidden;bt.hidden=true;}else mb.hidden=true;
     const db=$('dbtn'+i);db.hidden=pos!=='BTN'||out;db.style.left=(px+(50-px)*0.22+(px<50?4:-4))+'%';db.style.top=(py+(cy-py)*0.3)+'%';
   }
   for(let i=n;i<10;i++){const b=$('bet'+i),d=$('dbtn'+i);if(b)b.hidden=true;if(d)d.hidden=true;}
@@ -1013,13 +1045,18 @@ function renderActions(){const st=S,box=$('actions');box.hidden=!st;if(!st)retur
     if(st.st===0&&st.cur===bb)pres.push(['2BB',bb*2],['2.5BB',bb*2.5],['3BB',bb*3]);else if(st.st===0)pres.push(['3배',st.cur*3]);
     else pres.push(['1/3',st.cur+(pot+tc)/3],['1/2',st.cur+(pot+tc)/2],['2/3',st.cur+(pot+tc)*2/3],['팟',st.cur+pot+tc]);
     pres.push(['올인',mx]);
-    $('presets').innerHTML=pres.map(([l,v])=>`<button type="button" class="chipbtn" data-v="${Math.round(Math.min(mx,Math.max(mn,v))/5)*5}">${l}</button>`).join('');
-    $('presets').querySelectorAll('button').forEach(b=>b.onclick=()=>{sl.value=b.dataset.v;syncAmt();sizeInfo();});
-    sl.value=Math.min(mx,Math.max(mn,pres[Math.min(2,pres.length-1)][1]));syncAmt();sizeInfo();}}
-function syncAmt(){if(!S)return;$('amt').value=+(+$('slider').value/S.bl[1]).toFixed(2);$('amtc').value=+$('slider').value;$('amtwarn').textContent='';}
-function sizeInfo(){if(!S||!S.L)return;const to=+$('slider').value;$('bRaise').innerHTML=`${to>=S.L[4]?'올인':S.L[5]?'벳':'레이즈'}<small>${bbOf2(to,S.bl[1]).replace('BB',' BB')}</small>`;$('bBetGo').textContent=`${fmt(to)} ${S.L[5]?'벳':'레이즈'}`;}
+    const exact=l=>l==='올인'||l==='최소';
+    $('presets').innerHTML=pres.map(([l,v])=>`<button type="button" class="chipbtn" data-v="${exact(l)?v:clampBet(Math.round(v/5)*5)}">${l}</button>`).join('');
+    $('presets').querySelectorAll('button').forEach(b=>b.onclick=()=>{setBet(+b.dataset.v);});
+    setBet(clampBet(Math.round(pres[Math.min(2,pres.length-1)][1]/5)*5));}}
+// 베팅 금액: 슬라이더 눈금(5칩)과 상관없이 정확한 값을 따로 들고 있음 → 올인은 항상 스택 전부
+let BETV=0;
+function clampBet(v){if(!S||!S.L)return v;v=Math.min(S.L[4],Math.max(S.L[3],v));if(S.L[4]-v<5)v=S.L[4];return v;}
+function setBet(v,from){if(!S||!S.L)return;BETV=clampBet(v);if(from!=='slider')$('slider').value=BETV;if(from!=='amtc')$('amtc').value=BETV;if(from!=='amt')$('amt').value=+(BETV/S.bl[1]).toFixed(2);sizeInfo();}
+function syncAmt(){if(!S||!S.L)return;setBet(BETV);$('amtwarn').textContent='';}
+function sizeInfo(){if(!S||!S.L)return;const to=BETV;$('bRaise').innerHTML=`${to>=S.L[4]?'올인':S.L[5]?'벳':'레이즈'}<small>${bbOf2(to,S.bl[1]).replace('BB',' BB')}</small>`;$('bBetGo').textContent=`${fmt(to)} ${S.L[5]?'벳':'레이즈'}`;}
 function sendAct(type){const st=S,me=mySeat();if(!st||st.act!==me||st.ov||sentSeq===st.seq)return;
-  let to=type==='raise'?+$('slider').value:0;if(type==='call'&&st.L[1])type='check';
+  let to=type==='raise'?clampBet(BETV):0;if(type==='call'&&st.L[1])type='check';
   if(MODE==='host'){H.apply(me,type,to,false);return;}
   sentSeq=st.seq;renderActions();if(!C.send({t:'act',seq:st.seq,type,to})){sentSeq=-1;renderActions();}
   setTimeout(()=>{if(S&&S.seq===sentSeq){sentSeq=-1;renderActions();}},4000);}
@@ -1119,7 +1156,7 @@ document.addEventListener('keydown',e=>{
   else if(act==='call'&&vis('bCall'))$('bCall').click();
   else if(act==='raise'&&vis('bRaise'))$('bRaise').click();
   else if(/^p\d$/.test(act)&&!$('sizer').hidden){const b=$('presets').querySelectorAll('button')[+act.slice(1)-1];if(b)b.click();}
-  else if((act==='up'||act==='down')&&!$('sizer').hidden){const sl=$('slider'),bb=S.bl[1];sl.value=Math.min(+sl.max,Math.max(+sl.min,+sl.value+(act==='up'?bb:-bb)));syncAmt();sizeInfo();}
+  else if((act==='up'||act==='down')&&!$('sizer').hidden){const bb=S.bl[1];setBet(BETV+(act==='up'?bb:-bb));}
 },true);
 
 // 설정 창
@@ -1153,13 +1190,15 @@ $('cfgPlays').onchange=()=>{H.cfg.plays=$('cfgPlays').checked;H.lobbyCast();};
 $('bStart').onclick=()=>{H.cfg={stack:+$('cfgStack').value,min:+$('cfgMin').value,turn:+$('cfgTurn').value,plays:$('cfgPlays').checked,res:+$('cfgRes').value};H.start();};
 $('bCopy').onclick=async()=>{const v=$('shareLink').value;try{await navigator.clipboard.writeText(v);$('bCopy').textContent='복사됨';}catch(e){$('shareLink').select();$('bCopy').textContent='선택됨 · 복사하세요';}setTimeout(()=>{$('bCopy').textContent='링크 복사';},2000);};
 $('bFold').onclick=()=>sendAct('fold');$('bCall').onclick=()=>sendAct('call');$('bRaise').onclick=()=>sendAct('raise');$('bBetGo').onclick=()=>{syncAmt();sendAct('raise');};
-$('slider').addEventListener('input',()=>{syncAmt();sizeInfo();});
-$('amtc').addEventListener('input',()=>{if(!S||!S.L)return;const v=parseFloat($('amtc').value);if(isNaN(v))return;$('slider').value=v;$('amt').value=+(Math.min(Math.max(v,S.L[3]),S.L[4])/S.bl[1]).toFixed(2);sizeInfo();$('amtwarn').textContent=v<S.L[3]?'최소 금액보다 작아서 최소 금액으로 베팅됩니다.':v>S.L[4]?'스택보다 커서 올인으로 베팅됩니다.':'';});
-$('amt').addEventListener('input',()=>{if(!S||!S.L)return;const v=parseFloat($('amt').value);if(isNaN(v))return;const c=Math.round(v*S.bl[1]/5)*5;$('slider').value=c;$('amtc').value=Math.min(Math.max(c,S.L[3]),S.L[4]);sizeInfo();});
+$('slider').addEventListener('input',()=>{if(!S||!S.L)return;let v=+$('slider').value;if(v>=S.L[4]-5)v=S.L[4];setBet(v,'slider');$('amtwarn').textContent='';});
+$('amtc').addEventListener('input',()=>{if(!S||!S.L)return;const v=parseFloat($('amtc').value);if(isNaN(v))return;setBet(Math.round(v),'amtc');$('amtwarn').textContent=v<S.L[3]?'최소 금액보다 작아서 최소 금액으로 베팅됩니다.':v>S.L[4]?'스택보다 커서 올인으로 베팅됩니다.':'';});
+$('amt').addEventListener('input',()=>{if(!S||!S.L)return;const v=parseFloat($('amt').value);if(isNaN(v))return;setBet(Math.round(v*S.bl[1]),'amt');});
 ['amt','amtc'].forEach(id=>{$(id).addEventListener('change',syncAmt);$(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();syncAmt();sendAct('raise');}});});
 $('chatSend').onclick=sendChat;$('chatIn').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();sendChat();}});
 $('quick').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('chatIn').value=b.textContent;sendChat();});
-try{MQ.addEventListener('change',()=>{renderTable();renderClock();});}catch(e){}
+function placePill(){const b=$('resultPill');if(MQ.matches){if(b.parentNode!==document.body)document.body.appendChild(b);}else if(b.parentNode!==$('center'))$('center').insertBefore(b,$('center').firstChild);}
+placePill();
+try{MQ.addEventListener('change',()=>{placePill();renderTable();renderClock();});}catch(e){}
 $('bChatT').onclick=()=>toggleChat();$('bSideT').onclick=()=>toggleSide();$('bChatX').onclick=()=>toggleChat(false);$('bSideX').onclick=()=>toggleSide(false);
 setInterval(renderClock,1000);
 function applySkin(v){$('felt').dataset.skin=v;$('skin').value=v;}
