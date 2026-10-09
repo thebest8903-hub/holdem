@@ -119,6 +119,8 @@ button,input,select{font:inherit;color:inherit}
 .seat.win .plate{border-color:var(--gold);background:linear-gradient(180deg,#3a2c08,#14100a)}
 .bet{position:absolute;transform:translate(-50%,-50%);z-index:3;display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.6);border-radius:999px;padding:2px 10px 2px 3px;font-weight:700;font-family:var(--mono);font-size:clamp(.8rem,1.8vmin,1rem);white-space:nowrap}
 .bet i{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,#fff 22%,#e0a21b 24%,#e0a21b 58%,#fff 60%,#fff 70%,#e0a21b 72%);border:1px solid rgba(0,0,0,.4)}
+.bet.mine{z-index:8;font-size:clamp(.95rem,2.2vmin,1.15rem);padding:4px 12px 4px 4px;background:rgba(0,0,0,.75);border:1px solid rgba(242,193,78,.6)}
+.bet.mine i{width:20px;height:20px}
 .dbtn{position:absolute;transform:translate(-50%,-50%);z-index:3;width:24px;height:24px;border-radius:50%;background:#fff;color:#111;font-weight:800;font-size:.78rem;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.5)}
 
 /* HUD / 도구 */
@@ -912,7 +914,7 @@ function renderTable(){
     const hole=el.querySelector('.hole');hole.innerHTML=h;hole.className='hole'+((isMe||(st.ov&&st.r&&st.r.sh&&st.r.sh[i]))?' open':' closed');
     const he=el.querySelector('.hand');he.textContent=hn;he.hidden=!hn;
     // 베팅 칩, 딜러 버튼 (좌석과 중앙 사이)
-    const bt=$('bet'+i);const bx=px+(50-px)*0.36,by=py+(cy-py)*0.40;bt.style.left=bx+'%';bt.style.top=by+'%';
+    const bt=$('bet'+i);const bx=isMe?(MQ.matches?px:px-10):px+(50-px)*0.36,by=isMe?py-(MQ.matches?16:8):py+(cy-py)*0.40;bt.classList.toggle('mine',isMe);bt.style.left=bx+'%';bt.style.top=by+'%';
     bt.innerHTML=x[2]>0&&!out?`<i></i>${bbOf(x[2],bb).replace('BB',' BB')}`:'';bt.hidden=!(x[2]>0&&!out);
     const db=$('dbtn'+i);db.hidden=pos!=='BTN'||out;db.style.left=(px+(50-px)*0.22+(px<50?4:-4))+'%';db.style.top=(py+(cy-py)*0.3)+'%';
   }
