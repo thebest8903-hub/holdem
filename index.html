@@ -356,6 +356,41 @@ body[data-back=green] .cd.back{background:repeating-linear-gradient(45deg,#1d6b4
 .seat.me .eq{left:calc(100% + 8px);top:auto;bottom:calc(var(--av)*.15);transform:none;bottom:auto;top:calc(var(--av)*.55)}
 .dbtn{z-index:7}
 .seat.sdshow{z-index:10}
+
+#infoBox{position:fixed;inset:0;z-index:80;background:rgba(5,7,10,.75);display:grid;place-items:center;padding:16px}
+#infoBox .setcard{width:min(620px,100%)}
+.btab,.ptab{width:100%;border-collapse:collapse;font-size:.92rem}
+.btab th,.ptab th{text-align:left;color:var(--muted);font-weight:500;font-size:.78rem;padding:4px 6px;border-bottom:1px solid var(--line)}
+.btab td,.ptab td{padding:7px 6px;border-bottom:1px solid #1e252f;font-family:var(--mono)}
+.ptab td:nth-child(2),.ptab td:nth-child(3){font-family:var(--f)}
+.btab tr.cur td{background:rgba(242,193,78,.14);color:var(--gold);font-weight:700}
+.btab tr.past td{opacity:.45}
+.ptab tr.me td{background:rgba(242,193,78,.08)}
+.ptab tr.out td{opacity:.6}
+.stt{font-size:.78rem;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.stt.on{background:#173d2a;color:#7dffb0}.stt.fold{background:#2a2f37;color:#aab2bc}.stt.out{background:#3a1518;color:#ffb3b3}
+.stt.wait{background:#3b2e0c;color:#ffd977}.stt.off{background:#2a2f37;color:#ff9a9a}.stt.win{background:#3a2c08;color:var(--gold)}
+.bi{color:var(--gold);font-size:.8rem;white-space:nowrap}
+#side{width:360px}
+.hitem{border-top:1px solid var(--line);padding:8px 0}
+.hitem summary{cursor:pointer;font-size:.92rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap;list-style:none}
+.hitem summary::-webkit-details-marker{display:none}
+.hitem summary em{font-style:normal;font-size:.72rem;background:#e9edf2;color:#121417;border-radius:5px;padding:0 5px}
+.hmc{display:inline-flex;gap:2px}.hw{color:var(--muted);font-size:.8rem}
+.up{color:var(--good);font-weight:700}.dn{color:var(--bad);font-weight:700}
+.hbody{display:grid;gap:6px;padding:8px 0 4px}
+.hrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hrow .lab{font-size:.75rem;color:var(--muted);min-width:3.5em}
+.cs{display:inline-flex;gap:3px;flex-wrap:wrap}
+.xslot{width:34px;height:47px;border-radius:5px;border:1px dashed var(--line);display:inline-block}
+.sdl{display:grid;gap:4px}
+.sdl div{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:.88rem}
+.sdl div.w b{color:var(--good)}
+.hlog{margin:0;padding-left:1.2rem;font-family:var(--mono);font-size:.74rem;display:grid;gap:1px;color:#c7d0da}
+.cd.muck{opacity:.55;filter:grayscale(.5)}
+@media (max-width:720px){#side{width:min(92vw,380px)}.ptab{font-size:.82rem}.ptab td{padding:6px 3px}}
+@media (max-width:720px){.tl{display:none}.tbtn{min-width:36px;padding:0 6px}#tools{gap:4px}#hud{padding-right:250px}#hudLevel{display:none}}
+#play.narrow .tl{display:none}#play.narrow .tbtn{min-width:40px;padding:0 9px}#play.narrow #skin{display:none}
 </style>
 </head><body>
 <div class="netmsg" id="netmsg" role="status" hidden></div>
@@ -413,7 +448,9 @@ body[data-back=green] .cd.back{background:repeating-linear-gradient(45deg,#1d6b4
     </div>
     <div id="tools">
       <button class="tbtn" type="button" id="bChatT" aria-label="채팅">💬<span class="badge" id="chatBadge" hidden>0</span></button>
-      <button class="tbtn" type="button" id="bSideT" aria-label="순위와 기록">☰ 순위</button>
+      <button class="tbtn" type="button" id="bSideT" aria-label="플레이어 현황">☰<span class="tl"> 플레이어</span></button>
+      <button class="tbtn" type="button" id="bHistT" aria-label="내 핸드 기록">📜<span class="tl"> 기록</span></button>
+      <button class="tbtn" type="button" id="bBlindT" aria-label="블라인드 구조">📊<span class="tl"> 블라인드</span></button>
       <button class="tbtn" type="button" id="bSndT" aria-label="소리 켜기/끄기">🔊</button>
       <button class="tbtn" type="button" id="bSetT" aria-label="단축키와 소리 설정">⚙</button>
       <select id="skin" aria-label="테이블 색"><option value="green">그린</option><option value="blue">블루</option><option value="red">버건디</option><option value="black">블랙</option></select>
@@ -449,7 +486,7 @@ body[data-back=green] .cd.back{background:repeating-linear-gradient(45deg,#1d6b4
   </main>
 
   <aside id="side" hidden aria-live="polite">
-    <div class="phead"><h2>순위 · 기록</h2><button class="xbtn" type="button" id="bSideX" aria-label="닫기">✕</button></div>
+    <div class="phead"><h2>플레이어 현황</h2><button class="xbtn" type="button" id="bSideX" aria-label="닫기">✕</button></div>
     <div id="sideBody"></div>
   </aside>
 
@@ -465,6 +502,12 @@ body[data-back=green] .cd.back{background:repeating-linear-gradient(45deg,#1d6b4
       <button class="abtn call" id="bCall" type="button" disabled>체크</button>
       <button class="abtn raise" id="bRaise" type="button" disabled>레이즈</button>
     </div>
+  </div>
+</div>
+<div id="infoBox" class="modal" hidden>
+  <div class="setcard" role="dialog" aria-labelledby="infoTitle">
+    <div class="phead"><h2 id="infoTitle"></h2><button class="xbtn" type="button" id="bInfoX" aria-label="닫기">✕</button></div>
+    <div id="infoBody"></div>
   </div>
 </div>
 <div id="setBox" hidden>
@@ -942,13 +985,13 @@ const H={peer:null,code:'',conns:new Map(),members:new Map(),G:null,P:[],seq:0,c
     }catch(e){LS.del('hp2p-save');}},
   save(){if(!H.G)return;LS.set('hp2p-save',JSON.stringify({code:H.code,G:H.G,P:H.P,seq:H.seq,cfg:H.cfg,clk:clkEl(),paused:CLK.paused,chat:CHAT.slice(-60)}));},
   online(seat){const p=H.P[seat];if(!p)return false;if(p.self)return true;const mb=H.members.get(p.token);return !!(mb&&mb.online!==false&&mb.peerId);},
-  newHand(){H.shows={};H.aib=-1;const G=H.G;G.targetLevel=Math.floor(clkEl()/(CLK.min*60000));G.newHand();
+  newHand(){H.shows={};H.aib=-1;H.sdSet=null;const G=H.G;G.targetLevel=Math.floor(clkEl()/(CLK.min*60000));G.newHand();
     if(G.levelUp){G.ev(`블라인드 상승 → 레벨 ${G.level+1} (${G._sb}/${G._bb}${G.ante?' 앤티 '+G.ante:''})`);H.sys(`블라인드가 ${fmt(G._sb)}/${fmt(G._bb)}${G.ante?' (앤티 '+fmt(G.ante)+')':''}로 올랐습니다.`);}
     H.seq++;H.turnStart=Date.now();H.after();},
-  apply(seat,type,to,auto){if(!['fold','check','call','raise'].includes(type))return;const G=H.G;
+  apply(seat,type,to,auto){if(!['fold','check','call','raise'].includes(type))return;const G=H.G;if(type==='raise'&&G.legal(seat).canRaise)H.lastAgg={h:G.handNo,st:G.street,seat};
     const b0=G.board.length;G.act(seat,type,to);H.runout=[3,4,5].filter(x=>x>b0&&x<=G.board.length).length;H.aib=(G.over&&H.runout>0&&G.result&&G.result.showdown)?b0:-1;if(auto)G.ev(`${G.seats[seat].name} 시간 초과`);H.seq++;H.turnStart=Date.now();H.after();},
   after(){const G=H.G;
-    if(G.over){const bust=(G.busted||[]).slice();H.bustNow=bust;
+    if(G.over){H.sdSet=H.showOrder();const bust=(G.busted||[]).slice();H.bustNow=bust;
       H.rbOpen=new Set(bust.filter(i=>(H.P[i].rb||0)<(H.cfg.rebuy||0)));H.rbCand=new Set(H.rbOpen);
       for(const i of bust){if(H.rbOpen.has(i))H.sys(`${G.seats[i].name}님 올인 패배 · 리바인할 수 있습니다 (${(H.cfg.rebuy||0)-(H.P[i].rb||0)}회 남음)`);else H.sys(`${G.seats[i].name}님 ${G.seats[i].place}위로 탈락`);}
       if(G.finished&&H.rbOpen.size){G.finished=false;const w=G.seats.find(p=>p.place===1);if(w)w.place=null;H.pendingFin=true;}
@@ -962,17 +1005,23 @@ const H={peer:null,code:'',conns:new Map(),members:new Map(),G:null,P:[],seq:0,c
       if(now-H.lastCast>3000)H.cast();renderClock();},FAST?80:500);},
   pub(){const G=H.G,now=Date.now(),L=(!G.over&&G.actor>=0)?G.legal(G.actor):null;
     const len=CLK.min*60000,el=clkEl(),last=G.level>=LEVELS.length-1;let r=null;
-    if(G.over&&G.result){r={w:G.result.won,sd:G.result.showdown?1:0,sh:{},nm:{}};if(G.result.showdown)for(const p of G.live()){r.sh[p.i]=p.cards;r.nm[p.i]=scoreName(G.result.score[p.i]);}}
+    if(G.over&&G.result){r={w:G.result.won,sd:G.result.showdown?1:0,sh:{},nm:{}};if(G.result.showdown){r.mk=[];for(const p of G.live()){if(H.sdSet&&!H.sdSet.has(p.i)){r.mk.push(p.i);continue;}r.sh[p.i]=p.cards;r.nm[p.i]=scoreName(G.result.score[p.i]);}}}
     return{seq:H.seq,h:G.handNo,lv:G.level,bl:[G._sb,G._bb,G.ante],act:G.over?-1:G.actor,st:G.street,bd:G.board,pot:G.pot,cur:G.currentBet,
       L:L?[L.toCall,L.canCheck?1:0,L.canRaise?1:0,L.minTo,L.maxTo,L.isBet?1:0]:null,
       ck:[last?-1:Math.max(0,(G.level+1)*len-el),CLK.paused?1:0,CLK.min,Math.floor(el/len)>G.level?1:0],
       tl:(!G.over&&G.actor>=0&&H.cfg.turn>0)?Math.max(0,H.cfg.turn*1000-(now-H.turnStart)):-1,
-      s:H.P.map((pl,i)=>{const p=G.seats[i];return[pl.nick,p.stack,p.bet,(p.folded?1:0)|(p.allIn?2:0)|(p.out?4:0)|(H.online(i)?0:8),p.lastAct||'',p.place||0,G.pos(i)||'',pl.rb||0];}),
-      ov:G.over?1:0,fin:G.finished?1:0,r,shw:H.pubShows(),aib:(H.aib==null?-1:H.aib),rbo:H.rbOpen?[...H.rbOpen]:[],rbm:H.cfg.rebuy||0,rbs:H.cfg.stack,nx:G.over&&!G.finished?Math.max(0,H.nextAt-now):0,lg:G.events.slice(-8)};},
+      s:H.P.map((pl,i)=>{const p=G.seats[i];return[pl.nick,p.stack,p.bet,(p.folded?1:0)|(p.allIn?2:0)|(p.out?4:0)|(H.online(i)?0:8),p.lastAct||'',p.place||0,G.pos(i)||'',pl.rb||0,p.startStack||0];}),
+      ov:G.over?1:0,fin:G.finished?1:0,r,shw:H.pubShows(),aib:(H.aib==null?-1:H.aib),rbo:H.rbOpen?[...H.rbOpen]:[],rbm:H.cfg.rebuy||0,rbs:H.cfg.stack,nx:G.over&&!G.finished?Math.max(0,H.nextAt-now):0,lg:G.events.slice(-40)};},
+  // 쇼다운 공개 순서: 리버 마지막 공격자(없으면 버튼 다음 사람)부터. 앞사람보다 약하면 자동 머크. 올인이 있으면 전부 공개.
+  showOrder(){const G=H.G;if(!G.result||!G.result.showdown)return null;const live=new Set(G.live().map(p=>p.i));
+    if(H.aib>=0||G.live().some(p=>p.allIn))return live;
+    let seq=[];for(let k=1;k<=NSEAT;k++){const i=(G.button+k)%NSEAT;if(live.has(i))seq.push(i);}
+    const la=H.lastAgg;if(la&&la.h===G.handNo&&la.st===3&&seq.includes(la.seat)){const k=seq.indexOf(la.seat);seq=seq.slice(k).concat(seq.slice(0,k));}
+    const sh=new Set();let best=-1;for(const i of seq){const sc=G.result.score[i];if(sc>=best){sh.add(i);best=sc;}}return sh;},
   pubShows(){const G=H.G,o={};for(const k in H.shows){const p=G.seats[k];if(p&&p.cards&&p.cards.length===2)o[k]=p.cards.map((c,x)=>H.shows[k][x]?c:null);}return o;},
   cast(){const G=H.G;if(!G)return;H.lastCast=Date.now();const st=H.pub();
     for(const {conn,token} of H.conns.values()){if(!conn.open||!token)continue;const seat=H.P.findIndex(p=>p.token===token);
-      const my=seat>=0&&G.seats[seat].cards.length&&!G.seats[seat].out?G.seats[seat].cards:null;try{conn.send({t:'state',s:st,me:seat,my});}catch(e){}}
+      const my=seat>=0&&G.seats[seat].cards.length&&(!G.seats[seat].out||G.over)?G.seats[seat].cards:null;try{conn.send({t:'state',s:st,me:seat,my});}catch(e){}}
     const me=H.P.findIndex(p=>p.self);S=Object.assign({},st,{me,_at:Date.now()});myCards=me>=0&&G.seats[me].cards.length?G.seats[me].cards.slice():null;renderAll();},
   rebuy(seat){const G=H.G;if(!G||!G.over||!H.rbOpen||!H.rbOpen.has(seat))return;const p=G.seats[seat],st=H.cfg.stack;
     Object.assign(p,{out:false,stack:st,place:null,folded:true,allIn:false});p.buyin=(p.buyin||0)+st;H.P[seat].rb=(H.P[seat].rb||0)+1;H.rbOpen.delete(seat);
@@ -988,7 +1037,7 @@ const H={peer:null,code:'',conns:new Map(),members:new Map(),G:null,P:[],seq:0,c
     if(alive<=1){const w=G.active()[0];if(w)w.place=1;G.finished=true;G.ev(`${w?w.name:''} 우승!`);H.sys(`🏆 ${w?w.name:''}님 우승!`);LS.del('hp2p-save');H.seq++;H.cast();return true;}
     return false;},
   show(seat,which){const G=H.G;if(!G||!G.over)return;const p=G.seats[seat];if(!p||!p.cards||p.cards.length<2)return;
-    const sd=G.result&&G.result.showdown&&G.live().some(q=>q.i===seat);if(sd)return;
+    const sd=G.result&&G.result.showdown&&G.live().some(q=>q.i===seat)&&(!H.sdSet||H.sdSet.has(seat));if(sd)return;
     const s=H.shows[seat]||[0,0];if(which===0||which===2)s[0]=1;if(which===1||which===2)s[1]=1;H.shows[seat]=s;
     G.ev(`${p.name} 카드 공개: ${p.cards.filter((c,k)=>s[k]).map(cardTxt).join(' ')}`);H.seq++;H.cast();},
   pauseToggle(){CLK.paused=!CLK.paused;if(CLK.paused)clkStop();else clkStart();H.sys(CLK.paused?'방장이 블라인드 시계를 멈췄습니다.':'블라인드 시계가 다시 흐릅니다.');H.cast();},
@@ -1048,14 +1097,14 @@ function ensureSeats(n){const st=$('stage');const have=st.querySelectorAll('.sea
 function GEO(){return MQ.matches?{cx:50,cy:48,rx:40,ry:38}:{cx:50,cy:48,rx:41,ry:36};}
 function seatXY(i,n,me){const d=((i-(me>=0?me:0))%n+n)%n;const a=(90+d*360/n)*Math.PI/180;const g=GEO();
   return[g.cx+g.rx*Math.cos(a),g.cy+g.ry*Math.sin(a)];}
-function renderAll(){renderStatus();renderMenu();renderLobby();renderTable();renderSide();renderActions();renderClock();renderTools();sfxWatch();applyKeyHints();}
+function renderAll(){renderStatus();renderMenu();renderLobby();renderTable();renderSide();renderActions();renderClock();renderTools();sfxWatch();applyKeyHints();try{recordMyHand();}catch(e){}}
 function renderStatus(){$('netmsg').textContent=NETMSG;$('netmsg').hidden=!NETMSG;}
 function renderMenu(){$('menu').hidden=MODE!=='menu';if(MODE==='menu'&&document.activeElement!==$('nick'))$('nick').value=ME.nick;}
 let chatInit=false,chatMob=false;
 function renderTools(){$('play').hidden=MODE==='menu';if(MODE==='menu'){chatInit=false;return;}
   if(!chatInit){chatInit=true;toggleChat(!MQ.matches);}
   if(S&&!chatMob&&MQ.matches){chatMob=true;toggleChat(false);}
-  $('play').classList.toggle('ingame',!!S);}
+  $('play').classList.toggle('ingame',!!S);const aw=$('area').clientWidth;$('play').classList.toggle('narrow',aw>0&&aw<980);}
 let FIN_AT=0;
 function renderLobby(){
   const fin=!!(S&&S.fin);if(!fin)FIN_AT=0;
@@ -1116,6 +1165,7 @@ function renderTable(){
     if(shown_sd){h=st.r.sh[i].map(c=>cardEl(c,isMe?'lg':'md')).join('');hn=rv?'':(st.r.nm&&st.r.nm[i]||'');}
     else if(isMe&&myCards&&!out){h=myCards.map(c=>cardEl(c,'lg'+(folded?' dim':''))).join('');hn=folded?'':handName(myCards,bdv);}
     else if(st.ov&&st.shw&&st.shw[i]&&!isMe){h=st.shw[i].map(c=>cardEl(c,'md')).join('');}
+    else if(st.ov&&st.r&&st.r.mk&&st.r.mk.includes(i)&&!isMe&&!rv){h=cardEl(null,'xs muck')+cardEl(null,'xs muck');}
     else if(!folded&&!out&&!st.ov)h=cardEl(null,'xs')+cardEl(null,'xs');
     const shwOpen=!!(st.ov&&st.shw&&st.shw[i]&&!isMe);
     const hole=el.querySelector('.hole');const hsig=st.h+'|'+h;if(hole.dataset.sig!==hsig){const fresh=hole.dataset.h!==String(st.h);hole.dataset.sig=hsig;hole.dataset.h=st.h;hole.innerHTML=h;if(fresh&&h)hole.querySelectorAll('.cd').forEach((c,k)=>{c.classList.add('deal');c.style.animationDelay=(k*0.12+(isMe?0.1:0))+'s';});}
@@ -1161,7 +1211,9 @@ function renderSide(){const st=S;if(!st){$('sideBody').innerHTML='';return;}
   else if(me>=0&&st.s[me][3]&4)top=`<div class="banner bad">탈락 · ${st.s[me][5]}위 · 끝날 때까지 관전·채팅할 수 있습니다</div>`+top;
   const live=st.s.map((x,i)=>({x,i})).filter(o=>!(o.x[3]&4)).sort((a,b)=>b.x[1]-a.x[1]);
   const out=st.s.map((x,i)=>({x,i})).filter(o=>o.x[3]&4).sort((a,b)=>a.x[5]-b.x[5]);
-  const stand=`<h3>순위</h3><ol class="rank">${live.map((o,k)=>`<li class="${o.i===me?'me':''}"><span>${k+1}</span><b>${esc(o.x[0])}${o.x[7]?` <small class="rbn">R${o.x[7]}</small>`:''}</b><span>${bbOf(o.x[1],st.bl[1])}</span></li>`).join('')}${out.map(o=>`<li class="out ${o.i===me?'me':''}"><span>${o.x[5]}위</span><b>${esc(o.x[0])}</b><span>탈락</span></li>`).join('')}</ol>`;
+  const buyin=x=>{const n=1+(x[7]||0);return`<span class="bi" title="바인 ${n}회">${'●'.repeat(Math.min(n,5))}${n>5?'+':''} ${n}</span>`;};
+  const status=(x,i)=>{if(x[3]&4)return`<span class="stt out">탈락 ${x[5]}위</span>`;if(st.fin&&x[5]===1)return'<span class="stt win">🏆 우승</span>';if(st.rbo&&st.rbo.includes(i))return'<span class="stt wait">리바인 대기</span>';if(x[3]&8)return'<span class="stt off">연결 끊김</span>';if(x[3]&1&&!st.ov)return'<span class="stt fold">폴드</span>';return'<span class="stt on">플레이 중</span>';};
+  const stand=`<h3>플레이어 (${live.length}/${st.s.length}명 남음)</h3><table class="ptab"><thead><tr><th>순위</th><th>이름</th><th>상태</th><th>바인</th><th>스택</th></tr></thead><tbody>${live.map((o,k)=>`<tr class="${o.i===me?'me':''}"><td>${st.fin&&o.x[5]===1?1:k+1}</td><td><b>${esc(o.x[0])}</b></td><td>${status(o.x,o.i)}</td><td>${buyin(o.x)}</td><td>${bbOf(o.x[1],st.bl[1])}</td></tr>`).join('')}${out.map(o=>`<tr class="out ${o.i===me?'me':''}"><td>${o.x[5]}위</td><td><b>${esc(o.x[0])}</b></td><td>${status(o.x,o.i)}</td><td>${buyin(o.x)}</td><td>–</td></tr>`).join('')}</tbody></table><p class="small">바인 ●: 처음 참가 1회 + 리바인 횟수. 리바인 없이 칩을 다 잃으면 그 시점 남은 인원 순으로 등수가 정해집니다.</p>`;
   const log=`<h3>이번 핸드</h3><ol class="minilog">${(st.lg||[]).map(e=>`<li>${esc(e)}</li>`).join('')}</ol>`;
   let dctl='';
   if(MODE==='host'&&H.G)dctl=`<h3>방장 메뉴</h3><div class="btnrow"><button class="btn sm" type="button" id="bPause">${CLK.paused?'시계 다시 시작':'블라인드 시계 일시정지'}</button>${st.ov&&!st.fin?'<button class="btn sm" type="button" id="bNextNow">다음 핸드 바로 시작</button>':''}<button class="btn sm danger" type="button" id="bEnd">게임 끝내기</button></div><p class="small">방장 화면을 닫거나 화면이 꺼지면 게임이 멈춥니다.</p>`;
@@ -1170,6 +1222,32 @@ function renderSide(){const st=S;if(!st){$('sideBody').innerHTML='';return;}
   if($('bEnd'))$('bEnd').onclick=()=>{if($('bEnd').dataset.sure)H.end();else{$('bEnd').dataset.sure='1';$('bEnd').textContent='한 번 더 누르면 종료';}};
   // 핸드 끝나면 결과를 화면 가운데에도
   const rb=$('resultPill');if(st.ov&&st.r&&!revealing()){const ws=Object.keys(st.r.w);rb.innerHTML=ws.map(i=>`<b>${esc(st.s[i][0])}</b> +${bbOf(st.r.w[i],st.bl[1]).replace('BB',' BB')}${st.r.nm&&st.r.nm[i]?` · ${esc(st.r.nm[i])}`:''}`).join('<br>');rb.hidden=false;}else rb.hidden=true;}
+// ---------- 개인 핸드 기록 (이 기기에 최근 30핸드) ----------
+function histKey(){return 'hp2p-hist-'+(MODE==='host'?H.code:C.code)+'-'+ME.token;}
+function loadHist(){try{return JSON.parse(LS.get(histKey())||'[]');}catch(e){return[];}}
+let HREC={};
+function recordMyHand(){const st=S,me=mySeat();if(!st||!st.ov||revealing()||me<0||!myCards||myCards.length<2)return;const k=(MODE==='host'?H.code:C.code)+':'+st.h;if(HREC[k])return;HREC[k]=1;
+  const x=st.s[me],r=st.r||{w:{}};const net=x[1]-(x[8]||x[1]);
+  const rec={h:st.h,lv:st.lv+1,bl:st.bl.slice(),pos:x[6]||'',cards:myCards.slice(),board:st.bd.slice(),net,pot:Object.values(r.w||{}).reduce((a,b)=>a+b,0),
+    win:Object.keys(r.w||{}).map(i=>({n:st.s[i][0],a:r.w[i],hand:r.nm&&r.nm[i]||''})),
+    sd:Object.keys(r.sh||{}).map(i=>({n:st.s[i][0],me:+i===me,c:r.sh[i],hand:r.nm&&r.nm[i]||'',w:!!(r.w&&r.w[i])})),
+    mk:(r.mk||[]).map(i=>st.s[i][0]),log:(st.lg||[]).slice(),t:Date.now()};
+  const H0=loadHist();if(H0.some(o=>o.h===rec.h))return;H0.unshift(rec);LS.set(histKey(),JSON.stringify(H0.slice(0,30)));if(!$('infoBox').hidden&&$('infoBox').dataset.kind==='hist')openInfo('hist');}
+function histHTML(){const L=loadHist();if(!L.length)return'<p class="small">아직 기록된 핸드가 없습니다. 내가 카드를 받은 핸드가 끝나면 여기에 쌓입니다 (최근 30핸드, 이 기기에만 저장).</p>';
+  const tot=L.reduce((a,o)=>a+o.net,0);
+  return`<p class="small">최근 ${L.length}핸드 합계 <b class="${tot>=0?'up':'dn'}">${tot>=0?'+':''}${fmt(tot)}칩</b> · 핸드를 누르면 자세히 보입니다.</p>`+L.map((o,ix)=>{const bb=o.bl[1];
+    let bd='';for(let k=0;k<5;k++)bd+=o.board[k]!=null?cardEl(o.board[k],'xs2'):'<span class="xslot"></span>';
+    const nt=o.net>0?`<span class="up">+${bbOf(o.net,bb)}</span>`:o.net<0?`<span class="dn">−${bbOf(-o.net,bb)}</span>`:'<span>±0</span>';
+    return`<details class="hitem"${ix===0?' open':''}><summary><span class="hmc">${o.cards.map(c=>cardEl(c,'xs2')).join('')}</span><b>#${o.h}</b> ${o.pos?`<em>${esc(o.pos)}</em>`:''} ${nt}<span class="hw">${o.win.map(w=>esc(w.n)).join(', ')} 승</span></summary>
+     <div class="hbody"><div class="hrow"><span class="lab">보드</span><span class="cs">${bd}</span></div>
+     ${o.sd.length?`<div class="hrow"><span class="lab">쇼다운</span><div class="sdl">${o.sd.map(s=>`<div class="${s.w?'w':''}"><b>${s.me?'나':esc(s.n)}</b><span class="cs">${s.c.map(c=>cardEl(c,'xs2')).join('')}</span><span>${esc(s.hand)}</span></div>`).join('')}${o.mk.length?`<div><b>${o.mk.map(esc).join(', ')}</b><span class="small">카드 숨김(머크)</span></div>`:''}</div></div>`:'<div class="hrow"><span class="lab">쇼다운</span><span class="small">없음 (모두 폴드)</span></div>'}
+     <div class="hrow"><span class="lab">결과</span><span>${o.win.map(w=>`${esc(w.n)} +${bbOf(w.a,bb)}${w.hand?` (${esc(w.hand)})`:''}`).join(', ')} · 팟 ${bbOf(o.pot,bb)}</span></div>
+     <ol class="hlog">${o.log.map(e=>`<li>${esc(e)}</li>`).join('')}</ol>
+     <p class="small">레벨 ${o.lv} (${fmt(o.bl[0])}/${fmt(o.bl[1])}${o.bl[2]?' · 앤티 '+fmt(o.bl[2]):''})</p></div></details>`;}).join('');}
+function blindHTML(){const st=S;const lv=st?st.lv:0,min=st?st.ck[2]:(H.cfg&&H.cfg.min)||15;
+  return`<p class="small">레벨당 ${min}분 · 현재 레벨 ${lv+1}${st&&st.ck[0]>=0?` · 다음 레벨까지 ${$('hudTime').textContent}`:''}</p><table class="btab"><thead><tr><th>레벨</th><th>스몰/빅</th><th>앤티</th><th>시작</th></tr></thead><tbody>${LEVELS.map((L,i)=>`<tr class="${i===lv?'cur':i<lv?'past':''}"><td>${i+1}</td><td>${fmt(L[0])} / ${fmt(L[1])}</td><td>${L[2]?fmt(L[2]):'–'}</td><td>${i*min}분</td></tr>`).join('')}</tbody></table>`;}
+function openInfo(kind){const b=$('infoBox');b.dataset.kind=kind;$('infoTitle').textContent=kind==='hist'?'내 핸드 기록':'블라인드 구조';$('infoBody').innerHTML=kind==='hist'?histHTML():blindHTML();b.hidden=false;
+  if(kind==='blind'){const c=$('infoBody').querySelector('tr.cur');if(c)c.scrollIntoView({block:'center'});}}
 function renderExtra(){const st=S,me=mySeat(),x=$('xbtns');let h='';
   if(st&&st.ov&&!revealing()&&me>=0){
     if(st.rbo&&st.rbo.includes(me)){const left=(st.rbm||0)-(st.s[me][7]||0);h=`<button type="button" class="xb gold" data-x="rebuy">💰 리바인<small>${fmt(st.rbs)}칩 · ${left}회 남음</small></button><button type="button" class="xb" data-x="norebuy">포기</button>`;}
@@ -1223,8 +1301,8 @@ function renderChat(){const el=$('chatLog');if(!el)return;const atBottom=el.scro
   if(last&&!last.sys&&!chatOpen()&&last.ts&&Date.now()-last.ts<3000){const t=$('toast');t.innerHTML=`<b>${esc(last.from)}</b> ${esc(last.text)}`;t.hidden=false;clearTimeout(renderChat._t);renderChat._t=setTimeout(()=>t.hidden=true,3500);}}
 function sendChat(){const t=cleanText($('chatIn').value);if(!t)return;$('chatIn').value='';
   if(MODE==='host')H.chat(ME.nick||'방장',t);else if(!C.send({t:'chat',text:t}))addChat({sys:1,text:'연결되지 않아 보내지 못했습니다.'});}
-function toggleChat(v){const open=v!==undefined?v:$('chatBox').hidden;$('chatBox').hidden=!open;$('bChatT').classList.toggle('on',open);if(open){unread=0;$('chatBadge').hidden=true;const el=$('chatLog');el.scrollTop=el.scrollHeight;setTimeout(()=>$('chatIn').focus(),0);}}
-function toggleSide(v){const open=v!==undefined?v:$('side').hidden;$('side').hidden=!open;$('bSideT').classList.toggle('on',open);}
+function toggleChat(v){const open=v!==undefined?v:$('chatBox').hidden;$('chatBox').hidden=!open;$('bChatT').classList.toggle('on',open);if(open){unread=0;$('chatBadge').hidden=true;const el=$('chatLog');el.scrollTop=el.scrollHeight;setTimeout(()=>$('chatIn').focus(),0);};renderTools()}
+function toggleSide(v){const open=v!==undefined?v:$('side').hidden;$('side').hidden=!open;$('bSideT').classList.toggle('on',open);;renderTools()}
 
 
 // =====================================================================
@@ -1369,7 +1447,7 @@ $('quick').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('chatIn').valu
 function placePill(){const b=$('resultPill');if(MQ.matches){if(b.parentNode!==$('actions'))$('actions').insertBefore(b,$('actions').firstChild);}else if(b.parentNode!==$('center'))$('center').insertBefore(b,$('center').firstChild);}
 placePill();
 try{MQ.addEventListener('change',()=>{placePill();renderTable();renderClock();});}catch(e){}
-$('bChatT').onclick=()=>toggleChat();$('bSideT').onclick=()=>toggleSide();$('bChatX').onclick=()=>toggleChat(false);$('bSideX').onclick=()=>toggleSide(false);
+$('bChatT').onclick=()=>toggleChat();$('bHistT').onclick=()=>openInfo('hist');$('bBlindT').onclick=()=>openInfo('blind');$('bInfoX').onclick=()=>{$('infoBox').hidden=true;};$('infoBox').addEventListener('click',e=>{if(e.target===$('infoBox'))$('infoBox').hidden=true;});$('bSideT').onclick=()=>toggleSide();$('bChatX').onclick=()=>toggleChat(false);$('bSideX').onclick=()=>toggleSide(false);
 setInterval(renderClock,1000);
 function applySkin(v){$('felt').dataset.skin=v;$('skin').value=v;}
 $('skin').onchange=()=>{applySkin($('skin').value);LS.set('hp2p-skin',$('skin').value);};applySkin(LS.get('hp2p-skin')||'green');
